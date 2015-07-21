@@ -1,0 +1,37 @@
+language: python
+python: '3.5'
+env:
+  matrix:
+  - TOXENV=py27
+  - TOXENV=py33
+  - TOXENV=py34
+  - TOXENV=py35
+  - TOXENV=flake8
+  - TOXENV=docs
+  global:
+    secure: ZDPRqonMTyHZKW3ZTUtdCaxsWmNC2mSnUvMJ5YcR/lHPaVEN+f7Us6sQ/7cxKJrqDaMWTmTuN9Z0iVSuIAJgcJm4X7zZ3UEtKi904agG44MCrjNHodrVm5OR5xENfTASC7lVyW0ETvIg1+HMx8vIH8Yq1kyMwh3G4ArjuPw6Tv6+J40CBbQASa1TQDeTICx0ubU+WtRnUmUeoqZ/Jj3hjWHacTiku4QnXc+C1jEr2qP7Uh7UBECTcCfyRKSSf1zRP0FOE54Yhb7UV9Bm3OzHhjMYrg5P3DixdKFa4k//DPpInLtfSOCvSnb2VdXYquqwyU5uz/cGmnftu+qaU7mDrHzG6GRqkP+43RIrilM1i2WC2PznpMLT8BaX2oI6dwPSW+QVRYpb0LZ4xoY7CeUtvUexDANqU7c0u8Jny4L88g+lndBpGEVwduGFBdtHNZooDYrA0lmFxQo6DFG9avXtMO1XxwPozFHgu3Qz1EJpQ/E47ET09afJCE6LpQ5kYk2Lyu6mtXumACdYGYLrwQ8DmsrXlBD9CL1WG0WgG+vLc2ry2gkUhvwPI7Wavi+K8PvN8HyMZk64AeRDn0RgT+Yc2KYnhJNH07DY+gwKcRuGDzaf0ymSxPjdMJWGY7sZ1hyhsaucbdHRldSQOCLjW7gxNfEGtKoUtR0hCDt4eiy8aMM=
+install:
+- pip install tox
+script:
+- tox
+matrix:
+  fast_finish: true
+before_install: pip install codecov
+after_success: codecov
+deploy:
+  provider: pypi
+  user: d0ugal-deploy
+  distributions: sdist bdist_wheel
+  password:
+    secure: bmH7/tOuATi5C4OHEDbCE9uhXZt84+gUq2QCsCpOiv+IS1IfzCteWvRYXZY/WX8PQx2OxukVr8Qyd83r/2NE74ZxlB/W2LHOAGLxMp6/DWLs104BIPgF6n050dDMnVVXgKvfw+8Q95JXQ3VM4aF3SfRtOu9iLbnVwAdINOUaAKBLRxvWG1BhxMdyovIp8bsRCo7qzYhKsFNLLfT8RnWCFmREg5exZHrpXMAV7Y777XunuV9fIQXxreup0+l1ZnF3n6zSRwjdphUuw21sghXRtVqrYsXnpIwjgTS+mnBg+ukAAwh4E5mdNKF0+o81tu4itqoECdjvw3JFhk+3zKmLOpQ6K0cn5PtRQ88mgfLZ0tNmL9sOk1bDRWRO7GP5B0PLDh4ta2Bm3nElQ4NP1CpssoXCFWdEwyhf0PD4OgrMEHXbMyB4Y4AhzG6OGlSTS5Bg/5i619KSyfqFP9bkZ4E6rwch3A8HHEEvxanZaHOTSYXMSzioL+16S6p0/g89KAMAnhSOwcPgz55BGOwlBF6dE+pOU7zuzvEbvdxv1BbM7aecl4XJcVVa617mXDDfRUz4IRrPXUrD7ZfKC65cSz0GMFV/AVrlxBtkQb1ysXMBWb4DFZR8utWVryC89RFSMl4iFTjCjgS0A6JurseTknzkLOXEc2lYNtyZsSEu95Tzd+I=
+  on:
+    tags: true
+    repo: d0ugal/retrace
+    condition: "$TOXENV = py35"
+after_success:
+  - git config user.name "Dougal Matthews";
+  - git config user.email "dougal@dougalmatthews.com";
+  - git remote add gh-token "https://${GH_TOKEN}@github.com/d0ugal/retrace.git";
+  - git fetch gh-token && git fetch gh-token gh-pages:gh-pages;
+  - pip install mkdocs mkdocs-material Pygments -IU;
+  - mkdocs gh-deploy -v --clean --remote-name gh-token;

@@ -1,0 +1,15 @@
+# Python
+*.pyc
+
+# Testing
+.tox
+.coverage
+
+# Packaging
+.cache
+build
+*.egg-info
+
+# pbr
+AUTHORS
+ChangeLog

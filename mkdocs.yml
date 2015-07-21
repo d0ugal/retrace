@@ -1,0 +1,21 @@
+site_name: retrace
+theme: material
+
+repo_name: 'GitHub'
+repo_url: 'https://github.com/d0ugal/retrace'
+
+site_dir: build/docs
+
+markdown_extensions:
+    - toc:
+       permalink: ¶
+    - admonition:
+    - codehilite(css_class=code):
+
+extra:
+  font:
+    text: 'Roboto'
+    code: 'Roboto Mono'
+  author:
+    github: 'd0ugal'
+    twitter: 'd0ugal'
