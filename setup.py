@@ -33,17 +33,14 @@ if sys.argv[-1] == 'publish':
     print("  git push --tags")
     sys.exit()
 
-with open('README.rst') as file_readme:
+with open('README.md') as file_readme:
     readme = file_readme.read()
-
-with open('HISTORY.rst') as file_history:
-    history = file_history.read()
 
 setup(
     name="retrace",
     version=get_version("retrace"),
     description='Retrace - configurable retrying functions',
-    long_description=readme + '\n\n' + history,
+    long_description=readme,
     author='Dougal Matthews',
     author_email="dougal@dougalmatthews.com",
     license='BSD',
@@ -62,6 +59,6 @@ setup(
         'Topic :: Utilities',
     ],
     keywords="decorator retry retrying exception exponential backoff",
-    packages=get_packages("mkdocs"),
-    test_suite="test_retrace",
+    packages=get_packages("retrace"),
+    zip_safe=False,
 )

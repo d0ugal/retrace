@@ -3,6 +3,8 @@ __version__ = '0.1.0.dev'
 import sys
 import functools
 
+from retrace import limits
+
 
 if sys.version_info[0:2] < (3, 4):
     def wraps(wrapped, assigned=functools.WRAPPER_ASSIGNMENTS,
@@ -43,12 +45,23 @@ def retry(*dargs, **dkwargs):
 
 class Retrying(object):
 
-    def __init__(self, on_exception=Exception):
+    def __init__(self, on_exception=Exception, limit=None):
+
+        self.attempts = 0
 
         self._on_exception = on_exception
+        self._limit = limit or limits.Unlimited()
+
+        if isinstance(self._limit, int):
+            self._limit = limits.Count(self._limit)
 
     def call(self, fn, *args, **kwargs):
-        try:
-            fn(*args, **kwargs)
-        except self._on_exception:
-            self.call(fn, *args, **kwargs)
+
+        while True:
+            self.attempts += 1
+            try:
+                return fn(*args, **kwargs)
+            except self._on_exception:
+
+                if self._limit.attempt(self.attempts):
+                    return

@@ -1,0 +1,2 @@
+class RetraceException(BaseException):
+    pass
