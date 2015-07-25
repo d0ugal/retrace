@@ -1,2 +1,7 @@
 site_name: retrace
 theme: readthedocs
+
+markdown_extensions:
+    - toc:
+        permalink: 
+    - admonition:

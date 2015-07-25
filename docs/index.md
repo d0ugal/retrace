@@ -1,7 +1,12 @@
-# Usage
+# Retrace Usage
 
 
 ## Retrying, on all exceptions
+
+
+If you want to retry a function call on any exception you can use the decorator
+with no arguments.
+
 
 ```python
 import retrace
@@ -10,6 +15,12 @@ import retrace
 def unstable():
     # ...
 ```
+
+!!! note
+
+    By default this will catch all subclasses of Exception, meaning it wont
+    catch a anything that subclasses BaseException directly like
+    KeyboardInterupt. **By default, it will retry 5 times.**
 
 
 ## Retrying specific exceptions only
