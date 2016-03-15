@@ -6,3 +6,8 @@ htmlcov/
 retrace.egg-info/
 *.pyc
 .coverage
+.cache
+.eggs
+AUTHORS
+ChangeLog
+build

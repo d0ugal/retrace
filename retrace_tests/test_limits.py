@@ -1,7 +1,6 @@
 import pytest
 
-from retrace import limits
-from retrace.tests.fakes import passes, fails
+from .fakes import passes, fails
 import retrace
 
 
@@ -14,7 +13,7 @@ def test_limit_reached():
         #...
     """
     wrapped = retrace.retry(limit=5)(fails)
-    with pytest.raises(limits.LimitException):
+    with pytest.raises(retrace.LimitException):
         wrapped(Exception)
 
 

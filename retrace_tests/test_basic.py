@@ -1,6 +1,6 @@
 import pytest
 
-from retrace.tests.fakes import passes, fails
+from .fakes import passes, fails
 import retrace
 
 

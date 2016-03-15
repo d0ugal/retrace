@@ -1,7 +1,10 @@
 site_name: retrace
-theme: readthedocs
+theme: material
 
 markdown_extensions:
     - toc:
-        permalink: 
+       permalink: ¶
     - admonition:
+    - codehilite(css_class=code):
+
+site_dir: build/docs
