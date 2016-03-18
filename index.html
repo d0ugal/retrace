@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="no-js ie6"><![endif]-->
+<!--[if IE 7 ]><html class="no-js ie7"><![endif]-->
+<!--[if IE 8 ]><html class="no-js ie8"><![endif]-->
+<!--[if IE 9 ]><html class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    
+      
+        <title>retrace</title>
+      
+      
+      
+      
+    
+    <meta property="og:url" content="None">
+    <meta property="og:title" content="retrace">
+    <meta property="og:image" content="None/./">
+    <meta name="apple-mobile-web-app-title" content="retrace">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    
+    <link rel="shortcut icon" type="image/x-icon" href="./assets/images/favicon-e565ddfa3b.ico">
+    <link rel="icon" type="image/x-icon" href="./assets/images/favicon-e565ddfa3b.ico">
+    <style>
+      @font-face {
+      	font-family: 'Icon';
+      	src: url('./assets/fonts/icon.eot?52m981');
+      	src: url('./assets/fonts/icon.eot?#iefix52m981')
+               format('embedded-opentype'),
+      		   url('./assets/fonts/icon.woff?52m981')
+               format('woff'),
+      		   url('./assets/fonts/icon.ttf?52m981')
+               format('truetype'),
+      		   url('./assets/fonts/icon.svg?52m981#icon')
+               format('svg');
+      	font-weight: normal;
+      	font-style: normal;
+      }
+    </style>
+    <link rel="stylesheet" href="./assets/stylesheets/application-20d5debb47.css">
+    
+    
+      
+      
+      
+      <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Mono">
+      <style>
+        body, input {
+          font-family: 'Roboto', Helvetica, Arial, sans-serif;
+        }
+        pre, code {
+          font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
+        }
+      </style>
+    
+    
+    <script src="./assets/javascripts/modernizr-4ab42b99fd.js"></script>
+    
+  </head>
+  
+  
+  
+  <body class=" ">
+    
+      
+      
+    
+    <div class="backdrop">
+      <div class="backdrop-paper"></div>
+    </div>
+    <input class="toggle" type="checkbox" id="toggle-drawer">
+    <input class="toggle" type="checkbox" id="toggle-search">
+    <label class="toggle-button overlay" for="toggle-drawer"></label>
+    <header class="header">
+      <nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        
+          <span class="path">
+            
+          </span>
+        
+        retrace
+      </div>
+    </div>
+    
+      
+      <div class="button button-twitter" role="button" aria-label="Twitter">
+        <a href="https://twitter.com/d0ugal" title="@d0ugal on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+      </div>
+    
+    
+      
+      <div class="button button-github" role="button" aria-label="GitHub">
+        <a href="https://github.com/d0ugal" title="@d0ugal on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+      </div>
+    
+    <div class="button button-search" role="button" aria-label="Search">
+      <label class="toggle-button icon icon-search" title="Search" for="toggle-search"></label>
+    </div>
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+    </header>
+    <main class="main">
+      
+      <div class="drawer">
+        <nav aria-label="Navigation">
+  
+  <a href="https://github.com/d0ugal/retrace" class="project">
+    <div class="banner">
+      
+      <div class="name">
+        <strong>retrace </strong>
+        
+          <br>
+          d0ugal/retrace
+        
+      </div>
+    </div>
+  </a>
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            
+            <a href="https://github.com/d0ugal/retrace/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/d0ugal/retrace/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+      <div class="toc">
+        <ul>
+          
+            
+  <li>
+    <a class="current" title="Home" href=".">
+      Home
+    </a>
+    
+      
+        
+      
+      
+        <ul>
+          
+            <li class="anchor">
+              <a title="Installation" href="#installation">
+                Installation
+              </a>
+            </li>
+          
+            <li class="anchor">
+              <a title="Usage Examples" href="#usage-examples">
+                Usage Examples
+              </a>
+            </li>
+          
+            <li class="anchor">
+              <a title="Custom Retry Handling" href="#custom-retry-handling">
+                Custom Retry Handling
+              </a>
+            </li>
+          
+        </ul>
+      
+    
+  </li>
+
+          
+        </ul>
+        
+          <hr>
+          <span class="section">The author</span>
+          <ul>
+            
+              
+              <li>
+                <a href="https://twitter.com/d0ugal" target="_blank" title="@d0ugal on Twitter">
+                  @d0ugal on Twitter
+                </a>
+              </li>
+            
+            
+              
+              <li>
+                <a href="https://github.com/d0ugal" target="_blank" title="@d0ugal on GitHub">
+                  @d0ugal on GitHub
+                </a>
+              </li>
+            
+          </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+      </div>
+      <article class="article">
+        <div class="wrapper">
+          
+          <h1 id="retrace">Retrace<a class="headerlink" href="#retrace" title="Permanent link">¶</a></h1>
+<p>Dealing with some unstable code? Be it a bad connection or system that often
+fall over retrace is here to help. Simple, easy and configurable method
+retrying with a nice clean API.</p>
+<p>Don't manually fudge around with exception retrying again!</p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
+<h3 id="install-from-pip">Install from pip<a class="headerlink" href="#install-from-pip" title="Permanent link">¶</a></h3>
+<p>Installation from pip is simple, just use</p>
+<div class="code"><pre><span></span>pip install retrace
+</pre></div>
+
+
+<h3 id="vendoring">Vendoring<a class="headerlink" href="#vendoring" title="Permanent link">¶</a></h3>
+<p>If you don't want to add a new dependency for such a small tool, you are in
+luck! Retrace is designed to be easily vendor-able! Simply head to the
+<a href="https://github.com/d0ugal/retrace">GitHub repo</a>, grab the <code>retrace.py</code> file
+and include it in your project tree. Then, for example, say you add it under
+<code>myproject.utils.retrace</code> then you just need to use that import path in the
+examples below.</p>
+<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">¶</a></h2>
+<h3 id="retrying-on-all-exceptions">Retrying, on all exceptions<a class="headerlink" href="#retrying-on-all-exceptions" title="Permanent link">¶</a></h3>
+<p>If you want to retry a function call on any exception you can use the decorator
+with no arguments.</p>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="nd">@retrace.retry</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default this will catch all subclasses of Exception, meaning it wont
+catch a anything that subclasses BaseException directly like
+KeyboardInterupt. <strong>Also, by default, it will retry 5 times.</strong></p>
+</div>
+<h3 id="retrying-specific-exceptions-only">Retrying specific exceptions only<a class="headerlink" href="#retrying-specific-exceptions-only" title="Permanent link">¶</a></h3>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">on_exeption</span><span class="o">=</span><span class="ne">IOError</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<h3 id="delaying-between-retries">Delaying between retries<a class="headerlink" href="#delaying-between-retries" title="Permanent link">¶</a></h3>
+<p>If you want to delay between retries you can pass in an int or interval object.
+Interval objects are given information and then return the sleep in seconds. If
+an int is passed that will be used instead.</p>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<h3 id="limit-the-number-of-attempts">Limit the number of attempts<a class="headerlink" href="#limit-the-number-of-attempts" title="Permanent link">¶</a></h3>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<h2 id="custom-retry-handling">Custom Retry Handling<a class="headerlink" href="#custom-retry-handling" title="Permanent link">¶</a></h2>
+<p>Customising the behaviour is a breeze, if you have some specific logic you
+want to implement.</p>
+<p>For example, here is a exponential backoff. It will increase the delay between
+each attempt. To do this, a method needs to be passed that accepts one
+argument. The argument is the the current attempt integer.</p>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="k">def</span> <span class="nf">exponential_backoff</span><span class="p">(</span><span class="n">attempt_number</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">attempt_number</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">sleep</span><span class="o">=</span><span class="n">exponential_backoff</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<p>Similarly, the same behaviour can be used to control the retrying behaviour.
+In this artificial example, the retry limit is 10 in the afternoon, but only 5
+in them orning.</p>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="k">def</span> <span class="nf">try_more_in_the_afternoon</span><span class="p">(</span><span class="n">attempt_number</span><span class="p">):</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">12</span> <span class="ow">and</span> <span class="n">attempt_number</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitException</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">attempt_number</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitException</span><span class="p">()</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">try_more_in_the_afternoon</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+          <aside class="copyright" role="note">
+            
+            Documentation built with
+            <a href="http://www.mkdocs.org" target="_blank">MkDocs</a>
+            using the
+            <a href="http://squidfunk.github.io/mkdocs-material/" target="_blank">
+              Material
+            </a>
+            theme.
+          </aside>
+          
+            <footer class="footer">
+              
+            </footer>
+          
+        </div>
+      </article>
+      <div class="results" role="status" aria-live="polite">
+        <div class="scrollable">
+          <div class="wrapper">
+            <div class="meta"></div>
+            <div class="list"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+      var base_url = '.';
+      var repo_id  = 'd0ugal/retrace';
+    </script>
+    <script src="./assets/javascripts/application-997097ee0c.js"></script>
+    
+    
+  </body>
+</html>
