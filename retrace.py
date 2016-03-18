@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Copyright © 2016, Dougal Matthews. All rights reserved.
 
@@ -105,6 +106,7 @@ class Count(Limit):
         if attempt_number > self.max:
             raise LimitException()
 
+
 class Fn(BaseAction):
     """
     Call a function to decide if the retry should happen.
@@ -121,6 +123,10 @@ class Fn(BaseAction):
 
 
 def retry(*dargs, **dkwargs):
+    """
+    The retry decorator. Can be passed all the arguments that are accepted by
+    Retry.__init__.
+    """
     # support both @retry and @retry() as valid syntax
     if len(dargs) == 1 and callable(dargs[0]):
         def wrap_simple(f):
@@ -164,7 +170,7 @@ class Retry(object):
         self._on_exception = on_exception
 
         if limit is None:
-            self._limit = Unlimited()
+            self._limit = Limit()
         elif isinstance(limit, int):
             self._limit = Count(limit)
         elif callable(limit) and not isinstance(limit, BaseAction):
@@ -173,7 +179,7 @@ class Retry(object):
             self._limit = limit
 
         if interval is None:
-            self._interval = NoInterval()
+            self._interval = Interval()
         elif isinstance(interval, int):
             self._interval = Sleep(interval)
         elif callable(interval) and not isinstance(interval, BaseAction):
