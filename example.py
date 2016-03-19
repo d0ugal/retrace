@@ -55,3 +55,5 @@ def validator(result):
 def wrong():
     count[1] += 1
     return count[1]
+
+print(wrong())
