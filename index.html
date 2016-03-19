@@ -235,24 +235,31 @@
 fall over retrace is here to help. Simple, easy and configurable method
 retrying with a nice clean API.</p>
 <p>Don't manually fudge around with exception retrying again!</p>
+<p>Retrace supports Python 2.7 and 3.3+.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
 <h3 id="install-from-pip">Install from pip<a class="headerlink" href="#install-from-pip" title="Permanent link">¶</a></h3>
-<p>Installation from pip is simple, just use</p>
+<p>Installation from pip is simple, like so:</p>
 <div class="code"><pre><span></span>pip install retrace
 </pre></div>
 
 
 <h3 id="vendoring">Vendoring<a class="headerlink" href="#vendoring" title="Permanent link">¶</a></h3>
 <p>If you don't want to add a new dependency for such a small tool, you are in
-luck! Retrace is designed to be easily vendor-able! Simply head to the
+luck! Retrace is <strong>designed to be easily vendor-able!</strong> Simply head to the
 <a href="https://github.com/d0ugal/retrace">GitHub repo</a>, grab the <code>retrace.py</code> file
 and include it in your project tree. Then, for example, say you add it under
 <code>myproject.utils.retrace</code> then you just need to use that import path in the
 examples below.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you choose to vendor retrace, you will need to manually version it
+yourself. We recommend that you pick the latest git tag to get the most
+recent stable version.</p>
+</div>
 <h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">¶</a></h2>
-<h3 id="retrying-on-all-exceptions">Retrying, on all exceptions<a class="headerlink" href="#retrying-on-all-exceptions" title="Permanent link">¶</a></h3>
+<h3 id="retry-all-exceptions">Retry all exceptions<a class="headerlink" href="#retry-all-exceptions" title="Permanent link">¶</a></h3>
 <p>If you want to retry a function call on any exception you can use the decorator
-with no arguments.</p>
+with no arguments. <strong>By default this will retry 5 times.</strong></p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
 
 <span class="nd">@retrace.retry</span>
@@ -265,9 +272,9 @@ with no arguments.</p>
 <p class="admonition-title">Note</p>
 <p>By default this will catch all subclasses of Exception, meaning it wont
 catch a anything that subclasses BaseException directly like
-KeyboardInterupt. <strong>Also, by default, it will retry 5 times.</strong></p>
+KeyboardInterupt.</p>
 </div>
-<h3 id="retrying-specific-exceptions-only">Retrying specific exceptions only<a class="headerlink" href="#retrying-specific-exceptions-only" title="Permanent link">¶</a></h3>
+<h3 id="retry-on-a-specific-exception-type">Retry on a specific exception type<a class="headerlink" href="#retry-on-a-specific-exception-type" title="Permanent link">¶</a></h3>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">on_exeption</span><span class="o">=</span><span class="ne">IOError</span><span class="p">)</span>
@@ -277,21 +284,33 @@ KeyboardInterupt. <strong>Also, by default, it will retry 5 times.</strong></p>
 
 
 <h3 id="delaying-between-retries">Delaying between retries<a class="headerlink" href="#delaying-between-retries" title="Permanent link">¶</a></h3>
-<p>If you want to delay between retries you can pass in an int or interval object.
-Interval objects are given information and then return the sleep in seconds. If
-an int is passed that will be used instead.</p>
+<p>If you want to delay between retries you can pass in a number which is equal
+to the number of seconds to delay between retrying. For example, wait a second
+between attempts</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
 
-<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
     <span class="c1"># ...</span>
 </pre></div>
 
 
 <h3 id="limit-the-number-of-attempts">Limit the number of attempts<a class="headerlink" href="#limit-the-number-of-attempts" title="Permanent link">¶</a></h3>
+<p>By default retrace will retry 5 times, if you want to change that, pass in a
+new limit.</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
 
-<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<h3 id="gradually-delay-more-between-attempts">Gradually delay more between attempts<a class="headerlink" href="#gradually-delay-more-between-attempts" title="Permanent link">¶</a></h3>
+<div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">retrace</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
     <span class="c1"># ...</span>
 </pre></div>
@@ -309,7 +328,7 @@ argument. The argument is the the current attempt integer.</p>
 <span class="k">def</span> <span class="nf">exponential_backoff</span><span class="p">(</span><span class="n">attempt_number</span><span class="p">):</span>
     <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">attempt_number</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 
-<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">sleep</span><span class="o">=</span><span class="n">exponential_backoff</span><span class="p">)</span>
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="n">exponential_backoff</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
     <span class="c1"># ...</span>
 </pre></div>
