@@ -343,10 +343,16 @@ some specific logic you want to implement.</p>
 each attempt. To do this, a method needs to be passed that accepts one
 argument. The argument is the the current attempt integer.</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
 <span class="kn">import</span> <span class="nn">retrace</span>
 
 <span class="k">def</span> <span class="nf">exponential_backoff</span><span class="p">(</span><span class="n">attempt_number</span><span class="p">):</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">attempt_number</span> <span class="o">+</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">attempt_number</span><span class="p">)</span>
+    <span class="c1"># Increase the delay between attempts each time it fails. This function</span>
+    <span class="c1"># sleeps for the number of seconds equal to the attempt number plus a random</span>
+    <span class="c1"># percentage of that time again. So, for example, after the first failure it</span>
+    <span class="c1"># sleeps between 1 and 2 seconds, then between 2 and 4, then 3 and 6 etc.</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">attempt_number</span> <span class="o">+</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">attempt_number</span><span class="p">))</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="n">exponential_backoff</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
