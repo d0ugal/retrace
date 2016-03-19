@@ -158,10 +158,16 @@ argument. The argument is the the current attempt integer.
 
 ```python
 import time
+import random
+
 import retrace
 
 def exponential_backoff(attempt_number):
-    time.sleep(attempt_number + (random.random() * attempt_number)
+    # Increase the delay between attempts each time it fails. This function
+    # sleeps for the number of seconds equal to the attempt number plus a random
+    # percentage of that time again. So, for example, after the first failure it
+    # sleeps between 1 and 2 seconds, then between 2 and 4, then 3 and 6 etc.
+    time.sleep(attempt_number + (random.random() * attempt_number))
 
 @retrace.retry(interval=exponential_backoff)
 def unstable():
