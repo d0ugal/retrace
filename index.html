@@ -9,16 +9,16 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     
       
-        <title>retrace</title>
+        <title>Retrace</title>
       
       
       
       
     
     <meta property="og:url" content="None">
-    <meta property="og:title" content="retrace">
+    <meta property="og:title" content="Retrace">
     <meta property="og:image" content="None/./">
-    <meta name="apple-mobile-web-app-title" content="retrace">
+    <meta name="apple-mobile-web-app-title" content="Retrace">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -90,7 +90,7 @@
             
           </span>
         
-        retrace
+        Retrace
       </div>
     </div>
     
@@ -133,7 +133,7 @@
     <div class="banner">
       
       <div class="name">
-        <strong>retrace </strong>
+        <strong>Retrace </strong>
         
           <br>
           d0ugal/retrace
@@ -231,6 +231,11 @@
         <div class="wrapper">
           
           <h1 id="retrace-configurable-retrying-for-pythonistas">Retrace - Configurable retrying for Pythonistas.<a class="headerlink" href="#retrace-configurable-retrying-for-pythonistas" title="Permanent link">¶</a></h1>
+<p><a href="https://pypi.python.org/pypi/retrace"><img alt="PyPI Downloads" src="https://img.shields.io/pypi/dm/retrace.png" /></a>
+<a href="https://pypi.python.org/pypi/retrace"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/retrace.png" /></a>
+<a href="https://travis-ci.org/d0ugal/retrace"><img alt="Build Status" src="https://img.shields.io/travis/d0ugal/retrace/master.png" /></a>
+<a href="http://codecov.io/github/d0ugal/retrace?branch=master"><img alt="Coverage Status" src="http://codecov.io/github/d0ugal/retrace/coverage.svg?branch=master" /></a>
+<a href="https://landscape.io/github/d0ugal/retrace/master"><img alt="Landscale Code Health" src="https://landscape.io/github/d0ugal/retrace/master/landscape.svg?style=flat-square" /></a></p>
 <p>Dealing with some unstable code? Be it a bad connection or system that often
 fall over retrace is here to help. Simple, easy and configurable method
 retrying with a nice clean API.</p>
@@ -307,6 +312,14 @@ new limit.</p>
 
 
 <h3 id="gradually-delay-more-between-attempts">Gradually delay more between attempts<a class="headerlink" href="#gradually-delay-more-between-attempts" title="Permanent link">¶</a></h3>
+<p>Here is a neat trick - if you want to delay between each try, and have that
+increase with each attempt you can pass <code>time.sleep</code> in as your interval
+function! This will mean after the first attempt it will sleep for one second,
+then two seconds, three seconds etc.</p>
+<p>This works because you can use <a href="#custom-retry-
+handling">functions as the delay</a>, they must accept one argument which is the current retry number. So
+with <code>time.sleep</code>, the code sleeps for a the number of seconds equal to the
+attempt number.</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">retrace</span>
 
@@ -317,8 +330,15 @@ new limit.</p>
 
 
 <h2 id="custom-retry-handling">Custom Retry Handling<a class="headerlink" href="#custom-retry-handling" title="Permanent link">¶</a></h2>
-<p>Customising the behaviour is a breeze, if you have some specific logic you
-want to implement.</p>
+<h3 id="limits-and-intervals">limits and intervals<a class="headerlink" href="#limits-and-intervals" title="Permanent link">¶</a></h3>
+<p>Okay, we touched on this, but let's just state it here clearly. The retry
+decorator takes two different arguments for controlling it's behaviour, limit
+and interval. These are similar, but different. Limit controls how many times
+we should retry before giving up. Interval controls how much delay happens
+between retry attempts.</p>
+<h3 id="controlling-the-interval-between-retries">Controlling the interval between retries<a class="headerlink" href="#controlling-the-interval-between-retries" title="Permanent link">¶</a></h3>
+<p>Customising the interval, the delay between retries, is a breeze, if you have
+some specific logic you want to implement.</p>
 <p>For example, here is a exponential backoff. It will increase the delay between
 each attempt. To do this, a method needs to be passed that accepts one
 argument. The argument is the the current attempt integer.</p>
@@ -326,7 +346,7 @@ argument. The argument is the the current attempt integer.</p>
 <span class="kn">import</span> <span class="nn">retrace</span>
 
 <span class="k">def</span> <span class="nf">exponential_backoff</span><span class="p">(</span><span class="n">attempt_number</span><span class="p">):</span>
-    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">attempt_number</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">attempt_number</span> <span class="o">+</span> <span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">attempt_number</span><span class="p">)</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="n">exponential_backoff</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
@@ -334,9 +354,10 @@ argument. The argument is the the current attempt integer.</p>
 </pre></div>
 
 
-<p>Similarly, the same behaviour can be used to control the retrying behaviour.
-In this artificial example, the retry limit is 10 in the afternoon, but only 5
-in them orning.</p>
+<h3 id="limiting-the-number-of-reties">Limiting the number of reties<a class="headerlink" href="#limiting-the-number-of-reties" title="Permanent link">¶</a></h3>
+<p>Similarly, the same approach can be used to limit the number of retries. In
+this artificial example, the retry limit is 10 in the afternoon, but only 5
+in them morning.</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">retrace</span>
 
