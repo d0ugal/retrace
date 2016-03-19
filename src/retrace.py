@@ -37,7 +37,10 @@ import numbers
 try:
     import pbr.version
 except ImportError:
-    pass
+    # The version is only programatically available in some contexts and you
+    # must have pbr installed. Since we don't want to enforce that dependency
+    # this may not work. Also, the version isn't available when vendoring.
+    __version__ = None
 else:
     __version__ = pbr.version.VersionInfo('retrace').version_string()
 

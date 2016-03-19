@@ -3,5 +3,7 @@ flake8
 mkdocs
 mkdocs-material
 mock
+pbr
+Pygments
 pytest
 pytest-cov
