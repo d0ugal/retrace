@@ -34,6 +34,14 @@ import functools
 import numbers
 
 
+try:
+    import pbr.version
+except ImportError:
+    pass
+else:
+    __version__ = pbr.version.VersionInfo('retrace').version_string()
+
+
 if sys.version_info < (3, 0):
     def _update_wrapper(wrapper, wrapped,
                         assigned=functools.WRAPPER_ASSIGNMENTS,
