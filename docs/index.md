@@ -1,5 +1,22 @@
 # Retrace - Configurable retrying for Pythonistas.
 
+[![PyPI Downloads][pypi-dl-image]][pypi-dl-link]
+[![PyPI Version][pypi-v-image]][pypi-v-link]
+[![Build Status][travis-image]][travis-link]
+[![Coverage Status][codecov-image]][codecov-link]
+[![Landscale Code Health][landscape-image]][landscape-link]
+
+[codecov-image]: http://codecov.io/github/d0ugal/retrace/coverage.svg?branch=master
+[codecov-link]: http://codecov.io/github/d0ugal/retrace?branch=master
+[landscape-image]: https://landscape.io/github/d0ugal/retrace/master/landscape.svg?style=flat-square
+[landscape-link]: https://landscape.io/github/d0ugal/retrace/master
+[pypi-dl-image]: https://img.shields.io/pypi/dm/retrace.png
+[pypi-dl-link]: https://pypi.python.org/pypi/retrace
+[pypi-v-image]: https://img.shields.io/pypi/v/retrace.png
+[pypi-v-link]: https://pypi.python.org/pypi/retrace
+[travis-image]: https://img.shields.io/travis/d0ugal/retrace/master.png
+[travis-link]: https://travis-ci.org/d0ugal/retrace
+
 Dealing with some unstable code? Be it a bad connection or system that often
 fall over retrace is here to help. Simple, easy and configurable method
 retrying with a nice clean API.
@@ -99,6 +116,16 @@ def unstable():
 
 ### Gradually delay more between attempts
 
+Here is a neat trick - if you want to delay between each try, and have that
+increase with each attempt you can pass `time.sleep` in as your interval
+function! This will mean after the first attempt it will sleep for one second,
+then two seconds, three seconds etc.
+
+This works because you can use [functions as the delay](#custom-retry-
+handling), they must accept one argument which is the current retry number. So
+with `time.sleep`, the code sleeps for a the number of seconds equal to the
+attempt number.
+
 
 ```python
 import time
@@ -112,8 +139,18 @@ def unstable():
 
 ## Custom Retry Handling
 
-Customising the behaviour is a breeze, if you have some specific logic you
-want to implement.
+### limits and intervals
+
+Okay, we touched on this, but let's just state it here clearly. The retry
+decorator takes two different arguments for controlling it's behaviour, limit
+and interval. These are similar, but different. Limit controls how many times
+we should retry before giving up. Interval controls how much delay happens
+between retry attempts.
+
+### Controlling the interval between retries
+
+Customising the interval, the delay between retries, is a breeze, if you have
+some specific logic you want to implement.
 
 For example, here is a exponential backoff. It will increase the delay between
 each attempt. To do this, a method needs to be passed that accepts one
@@ -124,16 +161,18 @@ import time
 import retrace
 
 def exponential_backoff(attempt_number):
-    time.sleep(attempt_number * 2)
+    time.sleep(attempt_number + (random.random() * attempt_number)
 
 @retrace.retry(interval=exponential_backoff)
 def unstable():
     # ...
 ```
 
-Similarly, the same behaviour can be used to control the retrying behaviour.
-In this artificial example, the retry limit is 10 in the afternoon, but only 5
-in them orning.
+### Limiting the number of reties
+
+Similarly, the same approach can be used to limit the number of retries. In
+this artificial example, the retry limit is 10 in the afternoon, but only 5
+in them morning.
 
 ```python
 import datetime
