@@ -74,13 +74,13 @@ class LimitReached(RetraceException):
     """
 
 
-class BaseAction(object):
+class _BaseAction(object):
     """
     The base exception to be used by all custom intervals and limiters.
     """
 
 
-class Interval(BaseAction):
+class Interval(_BaseAction):
     """
     The base interval class. It provides no interval by default.
     """
@@ -102,7 +102,7 @@ class Sleep(Interval):
         time.sleep(self._delay)
 
 
-class Limit(BaseAction):
+class Limit(_BaseAction):
     """
     The base limit class. It provides no limits by default.
     """
@@ -120,11 +120,11 @@ class Count(Limit):
         self.max = max
 
     def attempt(self, attempt_number):
-        if attempt_number > self.max:
+        if attempt_number >= self.max:
             raise LimitReached()
 
 
-class Fn(BaseAction):
+class Fn(_BaseAction):
     """
     Call a function to dictate the limit or delay.
     """

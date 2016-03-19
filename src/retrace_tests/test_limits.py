@@ -5,25 +5,23 @@ import mock
 
 import retrace
 
-_fails_4_times_then_passes = mock.Mock()
-_fails_4_times_then_passes.side_effect = [
-    KeyError("A"),
-    KeyError("B"),
-    KeyError("C"),
-    KeyError("D"),
-    "PASS"
-]
-
 
 @pytest.fixture
 def fail_then_pass():
 
-    _fails_4_times_then_passes.reset_mock()
+    mock_function = mock.Mock()
+    mock_function.side_effect = [
+        KeyError("A"),
+        KeyError("B"),
+        KeyError("C"),
+        KeyError("D"),
+        "PASS"
+    ]
 
     def fails_4_times_then_passes():
-        return _fails_4_times_then_passes()
+        return mock_function()
 
-    return fails_4_times_then_passes
+    return mock_function, fails_4_times_then_passes
 
 
 def test_limit_passed_first_time(passes):
@@ -52,16 +50,18 @@ def test_limit_always_fails(fails):
 
 
 def test_fails_then_pass(fail_then_pass):
+    mock, fail_then_pass = fail_then_pass
     wrapped = retrace.retry()(fail_then_pass)
     assert wrapped() == "PASS"
-    assert _fails_4_times_then_passes.call_count == 5
+    assert mock.call_count == 5
 
 
 def test_fails_4_times_and_hits_limit(fail_then_pass):
+    mock, fail_then_pass = fail_then_pass
     wrapped = retrace.retry(limit=4)(fail_then_pass)
     with pytest.raises(retrace.LimitReached):
         wrapped()
-    assert _fails_4_times_then_passes.call_count == 4
+    assert mock.call_count == 4
 
 
 def test_limit_fn(fails):
