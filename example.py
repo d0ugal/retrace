@@ -5,7 +5,7 @@ import time
 import retrace
 
 
-count = [0, ]
+count = [0, 0]
 
 
 def limit(attempt_number):
@@ -46,4 +46,12 @@ try:
 except retrace.LimitReached:
     print("Limit reached.\n\n")
 
-print(dir(unstable))
+
+def validator(result):
+    return result == 3
+
+
+@retrace.retry(validator=validator)
+def wrong():
+    count[1] += 1
+    return count[1]
