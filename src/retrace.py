@@ -42,7 +42,7 @@ except ImportError:
     # this may not work. Also, the version isn't available when vendoring.
     __version__ = None
 else:
-    __version__ = pbr.version.VersionInfo('retrace').version_string()
+    __version__ = pbr.version.VersionInfo('retrace').version_string_with_vcs()
 
 
 if sys.version_info < (3, 0):
