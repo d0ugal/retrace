@@ -124,6 +124,24 @@ class Count(Limit):
             raise LimitReached()
 
 
+class Validator(_BaseAction):
+
+    def __init__(self):
+        pass
+
+    def validate(self, result):
+        return True
+
+
+class Match(Validator):
+
+    def __init__(self, value):
+        self._value = value
+
+    def validate(self, result):
+        return result == self._value
+
+
 class Fn(_BaseAction):
     """
     Call a function to dictate the limit or delay.
@@ -137,6 +155,9 @@ class Fn(_BaseAction):
 
     def attempt(self, attempt_number):
         return self.fn(attempt_number)
+
+    def validate(self, result):
+        return self.fn(result)
 
 
 def retry(*dargs, **dkwargs):
@@ -175,7 +196,8 @@ class Retry(object):
     objects which control the retry flow.
     """
 
-    def __init__(self, on_exception=Exception, limit=5, interval=None):
+    def __init__(self, on_exception=Exception, limit=5, interval=None,
+                 validator=None):
         """Configure how a function should be retried.
 
         Args:
@@ -186,6 +208,11 @@ class Retry(object):
         self.attempts = 0
         self._on_exception = on_exception
 
+        self._setup_limit(limit)
+        self._setup_interval(interval)
+        self._setup_validator(validator)
+
+    def _setup_limit(self, limit):
         if limit is None:
             self._limit = Limit()
         elif isinstance(limit, numbers.Number):
@@ -195,6 +222,7 @@ class Retry(object):
         else:
             self._limit = limit
 
+    def _setup_interval(self, interval):
         if interval is None:
             self._interval = Interval()
         elif isinstance(interval, numbers.Number):
@@ -204,20 +232,31 @@ class Retry(object):
         else:
             self._interval = interval
 
+    def _setup_validator(self, validator):
+
+        if validator is None:
+            self.validator = Validator()
+        elif callable(validator):
+            self.validator = Fn(validator)
+        else:
+            self.validator == Match(value=validator)
+
     def __call__(self, fn, *args, **kwargs):
 
         while True:
             self.attempts += 1
             try:
-                return fn(*args, **kwargs)
+                result = fn(*args, **kwargs)
+                if self.validator.validate(result):
+                    return result
             except self._on_exception as e:
 
                 if isinstance(e, RetraceException):
                     raise
 
-                # On a failure, the attempt call decides if we should try
-                # again. It should raise a LimitReached if we should stop.
-                self._limit.attempt(self.attempts)
+            # On a failure, the attempt call decides if we should try
+            # again. It should raise a LimitReached if we should stop.
+            self._limit.attempt(self.attempts)
 
             # Call delay, it should block for however long we should delay
             # before trying again.
