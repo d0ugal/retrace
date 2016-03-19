@@ -239,7 +239,7 @@ class Retry(object):
         elif callable(validator):
             self.validator = Fn(validator)
         else:
-            self.validator == Match(value=validator)
+            self.validator = Match(value=validator)
 
     def __call__(self, fn, *args, **kwargs):
 

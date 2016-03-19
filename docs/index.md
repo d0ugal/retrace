@@ -136,6 +136,27 @@ def unstable():
     # ...
 ```
 
+### Validating and retrying based on the results
+
+Sometimes you will have functions that don't error, but return bad values or
+you might need to call it until you get a good value. You can achieve this
+with validators.
+
+In The following example, we have a function that returns a good value half
+of the time, we want to retry unless the result matches what we expected.
+
+```python
+import random
+import retrace
+
+@retrace.retry(validator='WANTED VALUE')
+def unstable():
+    if random.random() > 0.5:
+        return 'WANTED VALUE'
+    else:
+        return 'BAD VALUE'
+```
+
 
 ## Custom Retry Handling
 
