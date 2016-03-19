@@ -1,8 +1,14 @@
 site_name: Retrace
+site_url: http://d0ugal.github.io/retrace/
+site_description: Configurable retrying.
+site_author: Dougal Matthews
+
 theme: material
 
 repo_name: 'GitHub'
 repo_url: 'https://github.com/d0ugal/retrace'
+copyright: <a href="http://www.dougalmatthews.com/">Dougal Matthews</a>
+
 
 site_dir: build/docs
 

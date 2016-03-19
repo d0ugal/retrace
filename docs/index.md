@@ -1,4 +1,4 @@
-# Retrace - Configurable retrying for Pythonistas.
+# Retrace - Configurable retrying.
 
 [![PyPI Downloads][pypi-dl-image]][pypi-dl-link]
 [![PyPI Version][pypi-v-image]][pypi-v-link]
