@@ -1,4 +1,4 @@
-# Retrace
+# Retrace - Configurable retrying for Pythonistas.
 
 Dealing with some unstable code? Be it a bad connection or system that often
 fall over retrace is here to help. Simple, easy and configurable method
@@ -118,9 +118,9 @@ def try_more_in_the_afternoon(attempt_number):
 
     now = datetime.datetime.now()
     if now.hour < 12 and attempt_number > 5:
-        raise retrace.LimitException()
+        raise retrace.LimitReached()
     elif attempt_number > 10:
-        raise retrace.LimitException()
+        raise retrace.LimitReached()
 
 @retrace.retry(limit=try_more_in_the_afternoon)
 def unstable():

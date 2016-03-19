@@ -2,5 +2,6 @@ coverage
 flake8
 mkdocs
 mkdocs-material
+mock
 pytest
 pytest-cov

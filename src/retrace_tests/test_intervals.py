@@ -1,31 +1,20 @@
 import pytest
 
-from . import fakes
-
 import retrace
 
 
-def test_limit_reached():
-    """Use the decorator and only retry on specific exceptions. The wrapped
-    method raises a KeyboardInterrupt but we only want to retry on an Exception
-
-    @retry()
-    def fn():
-        #...
-    """
-
-    with pytest.raises(retrace.LimitException):
-        wrapped = retrace.retry(interval=1)(fakes.fails)
+def test_limit_reached_float(fails):
+    with pytest.raises(retrace.LimitReached):
+        wrapped = retrace.retry(interval=.1)(fails)
         wrapped(Exception)
 
 
-def test_limit_passed():
-    """Use the decorator and only retry on specific exceptions. The wrapped
-    method raises a KeyboardInterrupt but we only want to retry on an Exception
+def test_limit_reached_int(fails):
+    with pytest.raises(retrace.LimitReached):
+        wrapped = retrace.retry(interval=1, limit=1)(fails)
+        wrapped(Exception)
 
-    @retry()
-    def fn():
-        #...
-    """
-    wrapped = retrace.retry(interval=1)(fakes.passes)
+
+def test_limit_passed(passes):
+    wrapped = retrace.retry(interval=.1)(passes)
     assert wrapped() == 1

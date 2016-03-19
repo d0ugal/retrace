@@ -31,17 +31,34 @@ POSSIBILITY OF SUCH DAMAGE.
 import time
 import sys
 import functools
+import numbers
 
-if sys.version_info < (3, 4):
-    def wraps(wrapped, assigned=functools.WRAPPER_ASSIGNMENTS,
-              updated=functools.WRAPPER_UPDATES):
-        def wrapper(f):
-            f = functools.wraps(wrapped, assigned, updated)(f)
-            f.__wrapped__ = wrapped
-            return f
+
+if sys.version_info < (3, 0):
+    def _update_wrapper(wrapper, wrapped,
+                        assigned=functools.WRAPPER_ASSIGNMENTS,
+                        updated=functools.WRAPPER_UPDATES):
+        for attr in assigned:
+            try:
+                value = getattr(wrapped, attr)
+            except AttributeError:
+                pass
+            else:
+                setattr(wrapper, attr, value)
+        for attr in updated:
+            getattr(wrapper, attr).update(getattr(wrapped, attr, {}))
+        # Issue #17482: set __wrapped__ last so we don't inadvertently copy it
+        # from the wrapped function when updating __dict__
+        wrapper.__wrapped__ = wrapped
+        # Return the wrapper so this can be used as a decorator via partial()
         return wrapper
+
+    def _wraps(wrapped, assigned=functools.WRAPPER_ASSIGNMENTS,
+               updated=functools.WRAPPER_UPDATES):
+        return functools.partial(_update_wrapper, wrapped=wrapped,
+                                 assigned=assigned, updated=updated)
 else:
-    wraps = functools.wraps
+    _wraps = functools.wraps
 
 
 class RetraceException(BaseException):
@@ -51,20 +68,21 @@ class RetraceException(BaseException):
     """
 
 
-class LimitException(RetraceException):
+class LimitReached(RetraceException):
     """
     Raised by Retrace limiters when the method has exhausted allowed attempts
     """
 
 
 class BaseAction(object):
-    pass
+    """
+    The base exception to be used by all custom intervals and limiters.
+    """
 
 
 class Interval(BaseAction):
     """
-    A stub class which basically doesn't do anything, it implements a delay
-    of no delay. This us used when no delay is wanted.
+    The base interval class. It provides no interval by default.
     """
 
     def delay(self, attempt_number):
@@ -73,7 +91,7 @@ class Interval(BaseAction):
 
 class Sleep(Interval):
     """
-    Sleep a set number of seconds between retries
+    Sleep a set number of seconds between retries.
     """
 
     def __init__(self, delay):
@@ -86,8 +104,7 @@ class Sleep(Interval):
 
 class Limit(BaseAction):
     """
-    A stub class which basically doesn't do anything, it implements a limit
-    of infinity!. This us used when no limit is wanted.
+    The base limit class. It provides no limits by default.
     """
 
     def attempt(self, attempt):
@@ -104,12 +121,12 @@ class Count(Limit):
 
     def attempt(self, attempt_number):
         if attempt_number > self.max:
-            raise LimitException()
+            raise LimitReached()
 
 
 class Fn(BaseAction):
     """
-    Call a function to decide if the retry should happen.
+    Call a function to dictate the limit or delay.
     """
 
     def __init__(self, fn):
@@ -131,7 +148,7 @@ def retry(*dargs, **dkwargs):
     if len(dargs) == 1 and callable(dargs[0]):
         def wrap_simple(f):
 
-            @wraps(f)
+            @_wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry()(f, *args, **kw)
 
@@ -142,7 +159,7 @@ def retry(*dargs, **dkwargs):
     else:
         def wrap(f):
 
-            @wraps(f)
+            @_wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry(*dargs, **dkwargs)(f, *args, **kw)
 
@@ -166,23 +183,23 @@ class Retry(object):
                 set which exception and it's subclasses to catch.
             limit ()
         """
-        self.attempts = 1
+        self.attempts = 0
         self._on_exception = on_exception
 
         if limit is None:
             self._limit = Limit()
-        elif isinstance(limit, int):
+        elif isinstance(limit, numbers.Number):
             self._limit = Count(limit)
-        elif callable(limit) and not isinstance(limit, BaseAction):
+        elif callable(limit) and not isinstance(limit, Fn):
             self._limit = Fn(limit)
         else:
             self._limit = limit
 
         if interval is None:
             self._interval = Interval()
-        elif isinstance(interval, int):
+        elif isinstance(interval, numbers.Number):
             self._interval = Sleep(interval)
-        elif callable(interval) and not isinstance(interval, BaseAction):
+        elif callable(interval) and not isinstance(interval, Fn):
             self._interval = Fn(interval)
         else:
             self._interval = interval
@@ -198,7 +215,10 @@ class Retry(object):
                 if isinstance(e, RetraceException):
                     raise
 
-                if self._limit.attempt(self.attempts):
-                    return
+                # On a failure, the attempt call decides if we should try
+                # again. It should raise a LimitReached if we should stop.
+                self._limit.attempt(self.attempts)
 
+            # Call delay, it should block for however long we should delay
+            # before trying again.
             self._interval.delay(self.attempts)
