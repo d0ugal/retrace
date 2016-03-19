@@ -32,7 +32,7 @@ import time
 import sys
 import functools
 import numbers
-
+import logging
 
 try:
     import pbr.version
@@ -72,6 +72,9 @@ else:
     _wraps = functools.wraps
 
 
+_LOG = logging.getLogger("retrace")
+
+
 class RetraceException(BaseException):
     """
     The base exception to be used by all Retrace exceptions. This is the one
@@ -89,6 +92,9 @@ class _BaseAction(object):
     """
     The base exception to be used by all custom intervals and limiters.
     """
+
+    def __str__(self):
+        return self.__class__.__name__
 
 
 class Interval(_BaseAction):
@@ -110,6 +116,7 @@ class Sleep(Interval):
 
     def delay(self, attempt_number):
 
+        _LOG.debug("Sleeping for %s seconds", self._delay)
         time.sleep(self._delay)
 
 
@@ -224,6 +231,7 @@ class Retry(object):
         self._setup_validator(validator)
 
     def _setup_limit(self, limit):
+
         if limit is None:
             self._limit = Limit()
         elif isinstance(limit, numbers.Number):
@@ -233,7 +241,11 @@ class Retry(object):
         else:
             self._limit = limit
 
+        _LOG.debug("Addling limiter %s to decorator",
+                   self._nice_name(self._limit))
+
     def _setup_interval(self, interval):
+
         if interval is None:
             self._interval = Interval()
         elif isinstance(interval, numbers.Number):
@@ -243,27 +255,43 @@ class Retry(object):
         else:
             self._interval = interval
 
+        _LOG.debug("Addling interval %s to decorator",
+                   self._nice_name(self._interval))
+
     def _setup_validator(self, validator):
 
         if validator is None:
-            self.validator = Validator()
+            self._validator = Validator()
         elif callable(validator):
-            self.validator = Fn(validator)
+            self._validator = Fn(validator)
         else:
-            self.validator = Match(value=validator)
+            self._validator = Match(value=validator)
+
+        _LOG.debug("Addling validator %s to decorator",
+                   self._nice_name(self._validator))
+
+    def _nice_name(self, thing):
+        mod = getattr(thing, '__module__')
+        name = getattr(thing, '__name__', str(thing))
+        return "{}.{}".format(mod, name)
 
     def __call__(self, fn, *args, **kwargs):
+
+        fn_name = self._nice_name(fn)
 
         while True:
             self.attempts += 1
             try:
+                _LOG.debug("Calling %s. Attempt %s", fn_name, self.attempts)
                 result = fn(*args, **kwargs)
-                if self.validator.validate(result):
+                if self._validator.validate(result):
                     return result
             except self._on_exception as e:
 
                 if isinstance(e, RetraceException):
                     raise
+
+                _LOG.exception("Caught exception when calling %s", fn_name)
 
             # On a failure, the attempt call decides if we should try
             # again. It should raise a LimitReached if we should stop.
