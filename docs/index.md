@@ -6,31 +6,40 @@ retrying with a nice clean API.
 
 Don't manually fudge around with exception retrying again!
 
+Retrace supports Python 2.7 and 3.3+.
+
 ## Installation
 
 ### Install from pip
 
-Installation from pip is simple, just use
+Installation from pip is simple, like so:
 
     pip install retrace
 
 ### Vendoring
 
 If you don't want to add a new dependency for such a small tool, you are in
-luck! Retrace is designed to be easily vendor-able! Simply head to the
+luck! Retrace is **designed to be easily vendor-able!** Simply head to the
 [GitHub repo](https://github.com/d0ugal/retrace), grab the `retrace.py` file
 and include it in your project tree. Then, for example, say you add it under
 `myproject.utils.retrace` then you just need to use that import path in the
 examples below.
 
 
+!!! note
+
+    If you choose to vendor retrace, you will need to manually version it
+    yourself. We recommend that you pick the latest git tag to get the most
+    recent stable version.
+
+
 ## Usage Examples
 
-### Retrying, on all exceptions
+### Retry all exceptions
 
 
 If you want to retry a function call on any exception you can use the decorator
-with no arguments.
+with no arguments. **By default this will retry 5 times.**
 
 
 ```python
@@ -45,10 +54,10 @@ def unstable():
 
     By default this will catch all subclasses of Exception, meaning it wont
     catch a anything that subclasses BaseException directly like
-    KeyboardInterupt. **Also, by default, it will retry 5 times.**
+    KeyboardInterupt.
 
 
-### Retrying specific exceptions only
+### Retry on a specific exception type
 
 ```python
 import retrace
@@ -61,14 +70,14 @@ def unstable():
 
 ### Delaying between retries
 
-If you want to delay between retries you can pass in an int or interval object.
-Interval objects are given information and then return the sleep in seconds. If
-an int is passed that will be used instead.
+If you want to delay between retries you can pass in a number which is equal
+to the number of seconds to delay between retrying. For example, wait a second
+between attempts
 
-```
+```python
 import retrace
 
-@retrace.retry(interval=5)
+@retrace.retry(interval=1)
 def unstable():
     # ...
 ```
@@ -76,10 +85,26 @@ def unstable():
 
 ### Limit the number of attempts
 
-```
+By default retrace will retry 5 times, if you want to change that, pass in a
+new limit.
+
+```python
 import retrace
 
-@retrace.retry(limit=5)
+@retrace.retry(limit=10)
+def unstable():
+    # ...
+```
+
+
+### Gradually delay more between attempts
+
+
+```python
+import time
+import retrace
+
+@retrace.retry(interval=time.sleep)
 def unstable():
     # ...
 ```
@@ -94,14 +119,14 @@ For example, here is a exponential backoff. It will increase the delay between
 each attempt. To do this, a method needs to be passed that accepts one
 argument. The argument is the the current attempt integer.
 
-```
+```python
 import time
 import retrace
 
 def exponential_backoff(attempt_number):
     time.sleep(attempt_number * 2)
 
-@retrace.retry(sleep=exponential_backoff)
+@retrace.retry(interval=exponential_backoff)
 def unstable():
     # ...
 ```
@@ -110,7 +135,7 @@ Similarly, the same behaviour can be used to control the retrying behaviour.
 In this artificial example, the retry limit is 10 in the afternoon, but only 5
 in them orning.
 
-```
+```python
 import datetime
 import retrace
 
