@@ -230,7 +230,7 @@
       <article class="article">
         <div class="wrapper">
           
-          <h1 id="retrace">Retrace<a class="headerlink" href="#retrace" title="Permanent link">¶</a></h1>
+          <h1 id="retrace-configurable-retrying-for-pythonistas">Retrace - Configurable retrying for Pythonistas.<a class="headerlink" href="#retrace-configurable-retrying-for-pythonistas" title="Permanent link">¶</a></h1>
 <p>Dealing with some unstable code? Be it a bad connection or system that often
 fall over retrace is here to help. Simple, easy and configurable method
 retrying with a nice clean API.</p>
@@ -325,9 +325,9 @@ in them orning.</p>
 
     <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">now</span><span class="o">.</span><span class="n">hour</span> <span class="o">&lt;</span> <span class="mi">12</span> <span class="ow">and</span> <span class="n">attempt_number</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitException</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitReached</span><span class="p">()</span>
     <span class="k">elif</span> <span class="n">attempt_number</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitException</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitReached</span><span class="p">()</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">try_more_in_the_afternoon</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
