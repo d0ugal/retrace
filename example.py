@@ -1,3 +1,6 @@
+"""
+This example exercises the features of retrace
+"""
 from __future__ import print_function
 
 import logging
@@ -39,7 +42,7 @@ def unstable(pass_at):
 
     if count[0] < pass_at:
         print("FAILING")
-        time.sleep(1)
+        time.sleep(0.1)
         raise Exception("FAIL")
 
     return "PASSING"
@@ -50,7 +53,6 @@ print(unstable(5))
 
 count[0] = 0
 
-print("\n\n\n")
 print("Calling unstable. Example 2")
 
 try:
