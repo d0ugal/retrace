@@ -241,8 +241,9 @@ class Retry(object):
         else:
             self._limit = limit
 
-        _LOG.debug("Adding limiter %s to decorator",
-                   self._nice_name(self._limit))
+        if limit is not None:
+            _LOG.debug("Adding limiter '%s' to decorator",
+                       self._nice_name(self._limit))
 
     def _setup_interval(self, interval):
 
@@ -255,8 +256,9 @@ class Retry(object):
         else:
             self._interval = interval
 
-        _LOG.debug("Adding interval %s to decorator",
-                   self._nice_name(self._interval))
+        if interval is not None:
+            _LOG.debug("Adding interval '%s' to decorator",
+                       self._nice_name(self._interval))
 
     def _setup_validator(self, validator):
 
@@ -267,8 +269,9 @@ class Retry(object):
         else:
             self._validator = Match(value=validator)
 
-        _LOG.debug("Adding validator %s to decorator",
-                   self._nice_name(self._validator))
+        if validator is not None:
+            _LOG.debug("Adding validator '%'s to decorator",
+                       self._nice_name(self._validator))
 
     def _nice_name(self, thing):
         mod = getattr(thing, '__module__')
