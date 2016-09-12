@@ -1,4 +1,4 @@
-# Retrace - Configurable retrying
+# Retrace - Configurable, elegant retrying
 
 [![PyPI Downloads][pypi-dl-image]][pypi-dl-link]
 [![PyPI Version][pypi-v-image]][pypi-v-link]
@@ -17,9 +17,9 @@
 [travis-image]: https://img.shields.io/travis/d0ugal/retrace/master.png
 [travis-link]: https://travis-ci.org/d0ugal/retrace
 
-Dealing with some unstable code? Be it a bad connection or system that often
-fall over retrace is here to help. Simple, easy and configurable method
-retrying with a nice clean API.
+Dealing with some unstable code? Be it a bad connection or a system that often
+falls over, retrace is here to help. Simple, easy, elegant and configurable
+method retrying with a nice clean API.
 
 Don't manually fudge around with exception retrying again!
 
@@ -76,6 +76,8 @@ def unstable():
 
 ### Retry on a specific exception type
 
+Retry when an IOError is raised or any subclasses of it.
+
 ```python
 import retrace
 
@@ -102,8 +104,8 @@ def unstable():
 
 ### Limit the number of attempts
 
-By default retrace will retry 5 times, if you want to change that, pass in a
-new limit.
+By default retrace will retry **5 times**, if you want to change that, pass in
+a new limit.
 
 ```python
 import retrace
@@ -214,6 +216,31 @@ def try_more_in_the_afternoon(attempt_number):
         raise retrace.LimitReached()
 
 @retrace.retry(limit=try_more_in_the_afternoon)
+def unstable():
+    # ...
+```
+
+### Custom Validators
+
+Validators are used to verify that the result from the function passes a
+check.
+
+If it isn't a callable, it can be any object that is then compared with the
+result. Check that the function returns the value "EXPECTED".
+
+```python
+@retrace.retry(validator="EXPECTED")
+def unstable():
+    # ...
+```
+
+Provide a custom validator that checks for type, rather than a full match.
+
+```python
+def validate_string(value):
+    return isinstance(value, str)
+
+@retrace.retry(validator=validate_string)
 def unstable():
     # ...
 ```
