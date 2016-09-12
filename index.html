@@ -142,7 +142,7 @@
         <strong>
           Retrace
           <span class="version">
-            2.2.4.dev4
+            2.2.4
           </span>
         </strong>
         
@@ -158,7 +158,7 @@
         <ul class="repo">
           <li class="repo-download">
             
-            <a href="https://github.com/d0ugal/retrace/archive/2.2.4.dev4.zip" target="_blank" title="Download" data-action="download">
+            <a href="https://github.com/d0ugal/retrace/archive/2.2.4.zip" target="_blank" title="Download" data-action="download">
               <i class="icon icon-download"></i> Download
             </a>
           </li>
@@ -241,15 +241,15 @@
       <article class="article">
         <div class="wrapper">
           
-          <h1 id="retrace-configurable-retrying">Retrace - Configurable retrying<a class="headerlink" href="#retrace-configurable-retrying" title="Permanent link">¶</a></h1>
+          <h1 id="retrace-configurable-elegant-retrying">Retrace - Configurable, elegant retrying<a class="headerlink" href="#retrace-configurable-elegant-retrying" title="Permanent link">¶</a></h1>
 <p><a href="https://pypi.python.org/pypi/retrace"><img alt="PyPI Downloads" src="https://img.shields.io/pypi/dm/retrace.png" /></a>
 <a href="https://pypi.python.org/pypi/retrace"><img alt="PyPI Version" src="https://img.shields.io/pypi/v/retrace.png" /></a>
 <a href="https://travis-ci.org/d0ugal/retrace"><img alt="Build Status" src="https://img.shields.io/travis/d0ugal/retrace/master.png" /></a>
 <a href="http://codecov.io/github/d0ugal/retrace?branch=master"><img alt="Coverage Status" src="http://codecov.io/github/d0ugal/retrace/coverage.svg?branch=master" /></a>
 <a href="https://landscape.io/github/d0ugal/retrace/master"><img alt="Landscale Code Health" src="https://landscape.io/github/d0ugal/retrace/master/landscape.svg?style=flat-square" /></a></p>
-<p>Dealing with some unstable code? Be it a bad connection or system that often
-fall over retrace is here to help. Simple, easy and configurable method
-retrying with a nice clean API.</p>
+<p>Dealing with some unstable code? Be it a bad connection or a system that often
+falls over, retrace is here to help. Simple, easy, elegant and configurable
+method retrying with a nice clean API.</p>
 <p>Don't manually fudge around with exception retrying again!</p>
 <p>Retrace supports Python 2.7 and 3.3+.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">¶</a></h2>
@@ -291,6 +291,7 @@ catch a anything that subclasses BaseException directly like
 KeyboardInterupt.</p>
 </div>
 <h3 id="retry-on-a-specific-exception-type">Retry on a specific exception type<a class="headerlink" href="#retry-on-a-specific-exception-type" title="Permanent link">¶</a></h3>
+<p>Retry when an IOError is raised or any subclasses of it.</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">on_exeption</span><span class="o">=</span><span class="ne">IOError</span><span class="p">)</span>
@@ -312,8 +313,8 @@ between attempts</p>
 
 
 <h3 id="limit-the-number-of-attempts">Limit the number of attempts<a class="headerlink" href="#limit-the-number-of-attempts" title="Permanent link">¶</a></h3>
-<p>By default retrace will retry 5 times, if you want to change that, pass in a
-new limit.</p>
+<p>By default retrace will retry <strong>5 times</strong>, if you want to change that, pass in
+a new limit.</p>
 <div class="code"><pre><span></span><span class="kn">import</span> <span class="nn">retrace</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -405,6 +406,27 @@ in them morning.</p>
         <span class="k">raise</span> <span class="n">retrace</span><span class="o">.</span><span class="n">LimitReached</span><span class="p">()</span>
 
 <span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="n">try_more_in_the_afternoon</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<h3 id="custom-validators">Custom Validators<a class="headerlink" href="#custom-validators" title="Permanent link">¶</a></h3>
+<p>Validators are used to verify that the result from the function passes a
+check.</p>
+<p>If it isn't a callable, it can be any object that is then compared with the
+result. Check that the function returns the value "EXPECTED".</p>
+<div class="code"><pre><span></span><span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="s2">&quot;EXPECTED&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
+    <span class="c1"># ...</span>
+</pre></div>
+
+
+<p>Provide a custom validator that checks for type, rather than a full match.</p>
+<div class="code"><pre><span></span><span class="k">def</span> <span class="nf">validate_string</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+<span class="nd">@retrace.retry</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">validate_string</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">unstable</span><span class="p">():</span>
     <span class="c1"># ...</span>
 </pre></div>
