@@ -270,7 +270,7 @@ class Retry(object):
             self._validator = Match(value=validator)
 
         if validator is not None:
-            _LOG.debug("Adding validator '%'s to decorator",
+            _LOG.debug("Adding validator '%s' to decorator",
                        self._nice_name(self._validator))
 
     def _nice_name(self, thing):
