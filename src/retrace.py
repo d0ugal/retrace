@@ -129,7 +129,7 @@ class Limit(_BaseAction):
     """
     The base limit class. It provides no limits by default.
     """
-    exceptions_list = []
+    reasons_list = []
 
     def attempt(self, attempt):
         return True
@@ -145,7 +145,7 @@ class Count(Limit):
 
     def attempt(self, attempt_number):
         if attempt_number >= self.max:
-            raise LimitReached(self.exceptions_list)
+            raise LimitReached(self.reasons_list)
 
 
 class Validator(_BaseAction):
@@ -300,10 +300,10 @@ class Retry(object):
                 if isinstance(e, RetraceException):
                     raise
 
-                self._limit.exceptions.append(e)
+                self._limit.reasons_list.append(e)
                 _LOG.exception("Caught exception when calling %s", fn_name)
             else:
-                self._limit.exceptions.append(None)
+                self._limit.reasons_list.append(None)
 
             # On a failure, the attempt call decides if we should try
             # again. It should raise a LimitReached if we should stop.
