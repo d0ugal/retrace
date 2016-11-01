@@ -77,7 +77,7 @@ _LOG = logging.getLogger("retrace")
 
 class RetraceException(BaseException):
     """
-    The base exception to be used by all Retrace exceptions. This is the one
+    The base exception to be used by all Retrace exceptions_list. This is the one
     to catch if you want to catch anything we do and will ever raise.
     """
 
@@ -86,6 +86,11 @@ class LimitReached(RetraceException):
     """
     Raised by Retrace limiters when the method has exhausted allowed attempts
     """
+    exceptions_list = []
+
+    def __init__(self, exceptions_list=None):
+        if exceptions_list:
+            self.exceptions_list = exceptions_list
 
 
 class _BaseAction(object):
@@ -124,6 +129,7 @@ class Limit(_BaseAction):
     """
     The base limit class. It provides no limits by default.
     """
+    exceptions_list = []
 
     def attempt(self, attempt):
         return True
@@ -139,7 +145,7 @@ class Count(Limit):
 
     def attempt(self, attempt_number):
         if attempt_number >= self.max:
-            raise LimitReached()
+            raise LimitReached(self.exceptions_list)
 
 
 class Validator(_BaseAction):
@@ -294,7 +300,10 @@ class Retry(object):
                 if isinstance(e, RetraceException):
                     raise
 
+                self._limit.exceptions.append(e)
                 _LOG.exception("Caught exception when calling %s", fn_name)
+            else:
+                self._limit.exceptions.append(None)
 
             # On a failure, the attempt call decides if we should try
             # again. It should raise a LimitReached if we should stop.

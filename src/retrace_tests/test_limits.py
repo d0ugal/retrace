@@ -25,7 +25,7 @@ def fail_then_pass():
 
 
 def test_limit_passed_first_time(passes):
-    """Use the decorator and only retry on specific exceptions. The wrapped
+    """Use the decorator and only retry on specific exceptions_list. The wrapped
     method raises a KeyboardInterrupt but we only want to retry on an Exception
 
     @retry()
@@ -37,7 +37,7 @@ def test_limit_passed_first_time(passes):
 
 
 def test_limit_always_fails(fails):
-    """Use the decorator and only retry on specific exceptions. The wrapped
+    """Use the decorator and only retry on specific exceptions_list. The wrapped
     method raises a KeyboardInterrupt but we only want to retry on an Exception
 
     @retry()
