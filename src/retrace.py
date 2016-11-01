@@ -77,7 +77,7 @@ _LOG = logging.getLogger("retrace")
 
 class RetraceException(BaseException):
     """
-    The base exception to be used by all Retrace exceptions_list. This is the one
+    The base exception to be used by all Retrace exceptions. This is the one
     to catch if you want to catch anything we do and will ever raise.
     """
 
