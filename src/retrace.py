@@ -125,11 +125,17 @@ class Sleep(Interval):
         time.sleep(self._delay)
 
 
-class Limit(_BaseAction):
+class ReasonsMixin(object):
+    """
+    An interface to store reasons(exception) of failed retries
+    """
+    reasons_list = []
+
+
+class Limit(ReasonsMixin, _BaseAction):
     """
     The base limit class. It provides no limits by default.
     """
-    reasons_list = []
 
     def attempt(self, attempt):
         return True
@@ -182,6 +188,10 @@ class Fn(_BaseAction):
 
     def validate(self, result):
         return self.fn(result)
+
+
+class LimitFn(ReasonsMixin, Fn):
+    pass
 
 
 def retry(*dargs, **dkwargs):
@@ -242,8 +252,8 @@ class Retry(object):
             self._limit = Limit()
         elif isinstance(limit, numbers.Number):
             self._limit = Count(limit)
-        elif callable(limit) and not isinstance(limit, Fn):
-            self._limit = Fn(limit)
+        elif callable(limit) and not isinstance(limit, LimitFn):
+            self._limit = LimitFn(limit)
         else:
             self._limit = limit
 

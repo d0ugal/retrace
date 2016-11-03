@@ -85,7 +85,7 @@ def test_limit_fn(fails):
 
 def test_limit_class(fails):
 
-    class LimitSeconds(object):
+    class LimitSeconds(retrace.Limit):
 
         def __init__(self, seconds):
             self.seconds = seconds
