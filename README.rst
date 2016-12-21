@@ -10,6 +10,8 @@ Retrace your steps and try again.
 Retrace provides a configurable decorator which allows you to wrap
 Python callables and retry them on errors or other specific conditions.
 
+It is simple and elegant.
+
 See the documentation at:
 
     http://d0ugal.github.io/retrace/
