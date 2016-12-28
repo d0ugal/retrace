@@ -26,7 +26,7 @@ def test_no_args_instance(passes):
 
 
 def test_raises(keyboard_interrupt):
-    """Use the decorator and only retry on specific exceptions. The wrapped
+    """Use the decorator and only retry on specific exceptions_list. The wrapped
     method raises a KeyboardInterrupt but we only want to retry on an Exception
 
     @retry()

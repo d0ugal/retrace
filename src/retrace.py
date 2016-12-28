@@ -86,6 +86,11 @@ class LimitReached(RetraceException):
     """
     Raised by Retrace limiters when the method has exhausted allowed attempts
     """
+    exceptions_list = []
+
+    def __init__(self, exceptions_list=None):
+        if exceptions_list:
+            self.exceptions_list = exceptions_list
 
 
 class _BaseAction(object):
@@ -120,7 +125,14 @@ class Sleep(Interval):
         time.sleep(self._delay)
 
 
-class Limit(_BaseAction):
+class ReasonsMixin(object):
+    """
+    An interface to store reasons(exception) of failed retries
+    """
+    reasons_list = []
+
+
+class Limit(ReasonsMixin, _BaseAction):
     """
     The base limit class. It provides no limits by default.
     """
@@ -139,7 +151,7 @@ class Count(Limit):
 
     def attempt(self, attempt_number):
         if attempt_number >= self.max:
-            raise LimitReached()
+            raise LimitReached(self.reasons_list)
 
 
 class Validator(_BaseAction):
@@ -176,6 +188,10 @@ class Fn(_BaseAction):
 
     def validate(self, result):
         return self.fn(result)
+
+
+class LimitFn(ReasonsMixin, Fn):
+    pass
 
 
 def retry(*dargs, **dkwargs):
@@ -236,8 +252,8 @@ class Retry(object):
             self._limit = Limit()
         elif isinstance(limit, numbers.Number):
             self._limit = Count(limit)
-        elif callable(limit) and not isinstance(limit, Fn):
-            self._limit = Fn(limit)
+        elif callable(limit) and not isinstance(limit, LimitFn):
+            self._limit = LimitFn(limit)
         else:
             self._limit = limit
 
@@ -294,7 +310,10 @@ class Retry(object):
                 if isinstance(e, RetraceException):
                     raise
 
+                self._limit.reasons_list.append(e)
                 _LOG.exception("Caught exception when calling %s", fn_name)
+            else:
+                self._limit.reasons_list.append(None)
 
             # On a failure, the attempt call decides if we should try
             # again. It should raise a LimitReached if we should stop.
