@@ -18,6 +18,10 @@ markdown_extensions:
     - admonition:
     - codehilite(css_class=code):
 
+google_analytics:
+  - 'UA-89549313-1'
+  - 'auto'
+
 extra:
   version: !!python/object/apply:getattr
     - !!python/object/apply:__import__
