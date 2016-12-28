@@ -33,5 +33,5 @@ after_success:
   - git config user.email "dougal@dougalmatthews.com";
   - git remote add gh-token "https://${GH_TOKEN}@github.com/d0ugal/retrace.git";
   - git fetch gh-token && git fetch gh-token gh-pages:gh-pages;
-  - pip install -IU -r test-requirements.txt .;
+  - pip install -IU -r test-requirements.txt retrace;
   - mkdocs gh-deploy -v --clean --remote-name gh-token;
