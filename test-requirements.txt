@@ -4,6 +4,6 @@ mkdocs
 mkdocs-material
 mock
 pbr
-Pygments
 pytest
 pytest-cov
+pygments
