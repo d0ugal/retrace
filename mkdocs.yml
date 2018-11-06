@@ -16,7 +16,7 @@ markdown_extensions:
     - toc:
        permalink: ¶
     - admonition:
-    - codehilite(css_class=code):
+    - codehilite
 
 google_analytics:
   - 'UA-89549313-1'
