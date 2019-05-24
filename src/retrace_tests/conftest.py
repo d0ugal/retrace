@@ -1,5 +1,5 @@
-import pytest
 import mock
+import pytest
 
 
 @pytest.fixture

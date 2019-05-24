@@ -1,9 +1,10 @@
 coverage
 flake8
+isort
 mkdocs
 mkdocs-material
 mock
 pbr
-Pygments
+pygments
 pytest
 pytest-cov

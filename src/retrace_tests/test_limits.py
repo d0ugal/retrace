@@ -1,8 +1,7 @@
 import time
 
-import pytest
 import mock
-
+import pytest
 import retrace
 
 
@@ -15,7 +14,7 @@ def fail_then_pass():
         KeyError("B"),
         KeyError("C"),
         KeyError("D"),
-        "PASS"
+        "PASS",
     ]
 
     def fails_4_times_then_passes():
@@ -72,7 +71,7 @@ def test_limit_fn(fails):
     def limit_1_sec(attempt_number):
         """Create a limiter that allows as many calls as possible in 0.1s"""
         count[0] += 1
-        if time.time() - start > .1:
+        if time.time() - start > 0.1:
             raise retrace.LimitReached()
 
     wrapped = retrace.retry(limit=limit_1_sec)(fails)
@@ -84,9 +83,7 @@ def test_limit_fn(fails):
 
 
 def test_limit_class(fails):
-
     class LimitSeconds(object):
-
         def __init__(self, seconds):
             self.seconds = seconds
             self.count = 0
