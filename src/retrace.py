@@ -28,11 +28,11 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
 
-import time
-import sys
 import functools
-import numbers
 import logging
+import numbers
+import sys
+import time
 
 try:
     import pbr.version
@@ -42,13 +42,17 @@ except ImportError:
     # this may not work. Also, the version isn't available when vendoring.
     __version__ = None
 else:
-    __version__ = pbr.version.VersionInfo('retrace').version_string_with_vcs()
+    __version__ = pbr.version.VersionInfo("retrace").version_string_with_vcs()
 
 
 if sys.version_info < (3, 0):
-    def _update_wrapper(wrapper, wrapped,
-                        assigned=functools.WRAPPER_ASSIGNMENTS,
-                        updated=functools.WRAPPER_UPDATES):
+
+    def _update_wrapper(
+        wrapper,
+        wrapped,
+        assigned=functools.WRAPPER_ASSIGNMENTS,
+        updated=functools.WRAPPER_UPDATES,
+    ):
         for attr in assigned:
             try:
                 value = getattr(wrapped, attr)
@@ -64,10 +68,16 @@ if sys.version_info < (3, 0):
         # Return the wrapper so this can be used as a decorator via partial()
         return wrapper
 
-    def _wraps(wrapped, assigned=functools.WRAPPER_ASSIGNMENTS,
-               updated=functools.WRAPPER_UPDATES):
-        return functools.partial(_update_wrapper, wrapped=wrapped,
-                                 assigned=assigned, updated=updated)
+    def _wraps(
+        wrapped,
+        assigned=functools.WRAPPER_ASSIGNMENTS,
+        updated=functools.WRAPPER_UPDATES,
+    ):
+        return functools.partial(
+            _update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated
+        )
+
+
 else:
     _wraps = functools.wraps
 
@@ -143,7 +153,6 @@ class Count(Limit):
 
 
 class Validator(_BaseAction):
-
     def __init__(self):
         pass
 
@@ -152,7 +161,6 @@ class Validator(_BaseAction):
 
 
 class Match(Validator):
-
     def __init__(self, value):
         self._value = value
 
@@ -185,8 +193,8 @@ def retry(*dargs, **dkwargs):
     """
     # support both @retry and @retry() as valid syntax
     if len(dargs) == 1 and callable(dargs[0]):
-        def wrap_simple(f):
 
+        def wrap_simple(f):
             @_wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry()(f, *args, **kw)
@@ -196,8 +204,8 @@ def retry(*dargs, **dkwargs):
         return wrap_simple(dargs[0])
 
     else:
-        def wrap(f):
 
+        def wrap(f):
             @_wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry(*dargs, **dkwargs)(f, *args, **kw)
@@ -214,8 +222,7 @@ class Retry(object):
     objects which control the retry flow.
     """
 
-    def __init__(self, on_exception=Exception, limit=5, interval=None,
-                 validator=None):
+    def __init__(self, on_exception=Exception, limit=5, interval=None, validator=None):
         """Configure how a function should be retried.
 
         Args:
@@ -242,8 +249,7 @@ class Retry(object):
             self._limit = limit
 
         if limit is not None:
-            _LOG.debug("Adding limiter '%s' to decorator",
-                       self._nice_name(self._limit))
+            _LOG.debug("Adding limiter '%s' to decorator", self._nice_name(self._limit))
 
     def _setup_interval(self, interval):
 
@@ -257,8 +263,9 @@ class Retry(object):
             self._interval = interval
 
         if interval is not None:
-            _LOG.debug("Adding interval '%s' to decorator",
-                       self._nice_name(self._interval))
+            _LOG.debug(
+                "Adding interval '%s' to decorator", self._nice_name(self._interval)
+            )
 
     def _setup_validator(self, validator):
 
@@ -270,12 +277,13 @@ class Retry(object):
             self._validator = Match(value=validator)
 
         if validator is not None:
-            _LOG.debug("Adding validator '%s' to decorator",
-                       self._nice_name(self._validator))
+            _LOG.debug(
+                "Adding validator '%s' to decorator", self._nice_name(self._validator)
+            )
 
     def _nice_name(self, thing):
-        mod = getattr(thing, '__module__')
-        name = getattr(thing, '__name__', str(thing))
+        mod = getattr(thing, "__module__")
+        name = getattr(thing, "__name__", str(thing))
         return "{}.{}".format(mod, name)
 
     def __call__(self, fn, *args, **kwargs):
