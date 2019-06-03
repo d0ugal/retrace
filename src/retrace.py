@@ -31,7 +31,6 @@ POSSIBILITY OF SUCH DAMAGE.
 import functools
 import logging
 import numbers
-import sys
 import time
 
 try:
@@ -43,43 +42,6 @@ except ImportError:
     __version__ = None
 else:
     __version__ = pbr.version.VersionInfo("retrace").version_string_with_vcs()
-
-
-if sys.version_info < (3, 0):
-
-    def _update_wrapper(
-        wrapper,
-        wrapped,
-        assigned=functools.WRAPPER_ASSIGNMENTS,
-        updated=functools.WRAPPER_UPDATES,
-    ):
-        for attr in assigned:
-            try:
-                value = getattr(wrapped, attr)
-            except AttributeError:
-                pass
-            else:
-                setattr(wrapper, attr, value)
-        for attr in updated:
-            getattr(wrapper, attr).update(getattr(wrapped, attr, {}))
-        # Issue #17482: set __wrapped__ last so we don't inadvertently copy it
-        # from the wrapped function when updating __dict__
-        wrapper.__wrapped__ = wrapped
-        # Return the wrapper so this can be used as a decorator via partial()
-        return wrapper
-
-    def _wraps(
-        wrapped,
-        assigned=functools.WRAPPER_ASSIGNMENTS,
-        updated=functools.WRAPPER_UPDATES,
-    ):
-        return functools.partial(
-            _update_wrapper, wrapped=wrapped, assigned=assigned, updated=updated
-        )
-
-
-else:
-    _wraps = functools.wraps
 
 
 _LOG = logging.getLogger("retrace")
@@ -195,7 +157,7 @@ def retry(*dargs, **dkwargs):
     if len(dargs) == 1 and callable(dargs[0]):
 
         def wrap_simple(f):
-            @_wraps(f)
+            @functools.wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry()(f, *args, **kw)
 
@@ -206,7 +168,7 @@ def retry(*dargs, **dkwargs):
     else:
 
         def wrap(f):
-            @_wraps(f)
+            @functools.wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry(*dargs, **dkwargs)(f, *args, **kw)
 
