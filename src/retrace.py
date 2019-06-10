@@ -248,6 +248,15 @@ class Retry(object):
         name = getattr(thing, "__name__", str(thing))
         return "{}.{}".format(mod, name)
 
+    def _limit_reached(self):
+        try:
+            # On a failure, the attempt call decides if we should try
+            # again. It should raise a LimitReached if we should stop.
+            self._limit.attempt(self.attempts)
+            return False
+        except LimitReached:
+            return True
+
     def __call__(self, fn, *args, **kwargs):
 
         fn_name = self._nice_name(fn)
@@ -257,18 +266,21 @@ class Retry(object):
             try:
                 _LOG.debug("Calling %s. Attempt %s", fn_name, self.attempts)
                 result = fn(*args, **kwargs)
-                if self._validator.validate(result):
-                    return result
             except self._on_exception as e:
 
                 if isinstance(e, RetraceException):
                     raise
 
-                _LOG.exception("Caught exception when calling %s", fn_name)
+                if self._limit_reached():
+                    raise
 
-            # On a failure, the attempt call decides if we should try
-            # again. It should raise a LimitReached if we should stop.
-            self._limit.attempt(self.attempts)
+                _LOG.exception("Caught exception when calling %s", fn_name)
+            else:
+                valid = self._validator.validate(result)
+                if valid:
+                    return result
+                if self._limit_reached():
+                    raise LimitReached("Validator failed and the limit was reached")
 
             # Call delay, it should block for however long we should delay
             # before trying again.
