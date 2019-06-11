@@ -23,7 +23,7 @@ method retrying with a nice clean API.
 
 Don't manually fudge around with exception retrying again!
 
-Retrace supports Python 2.7 and 3.3+.
+Retrace supports Python 3.3+.
 
 ## Installation
 

@@ -1,5 +1,9 @@
-import pytest
 import mock
+import pytest
+
+
+class CustomException(Exception):
+    pass
 
 
 @pytest.fixture
@@ -12,7 +16,7 @@ def passes():
 @pytest.fixture
 def fails():
     fails = mock.Mock()
-    fails.side_effect = Exception()
+    fails.side_effect = CustomException()
     return fails
 
 

@@ -1,9 +1,10 @@
 import time
 
-import pytest
 import mock
-
+import pytest
 import retrace
+
+from . import conftest
 
 
 @pytest.fixture
@@ -15,7 +16,7 @@ def fail_then_pass():
         KeyError("B"),
         KeyError("C"),
         KeyError("D"),
-        "PASS"
+        "PASS",
     ]
 
     def fails_4_times_then_passes():
@@ -45,7 +46,7 @@ def test_limit_always_fails(fails):
         #...
     """
     wrapped = retrace.retry()(fails)
-    with pytest.raises(retrace.LimitReached):
+    with pytest.raises(conftest.CustomException):
         wrapped(Exception)
 
 
@@ -59,7 +60,7 @@ def test_fails_then_pass(fail_then_pass):
 def test_fails_4_times_and_hits_limit(fail_then_pass):
     mock, fail_then_pass = fail_then_pass
     wrapped = retrace.retry(limit=4)(fail_then_pass)
-    with pytest.raises(retrace.LimitReached):
+    with pytest.raises(KeyError):
         wrapped()
     assert mock.call_count == 4
 
@@ -72,21 +73,19 @@ def test_limit_fn(fails):
     def limit_1_sec(attempt_number):
         """Create a limiter that allows as many calls as possible in 0.1s"""
         count[0] += 1
-        if time.time() - start > .1:
+        if time.time() - start > 0.1:
             raise retrace.LimitReached()
 
     wrapped = retrace.retry(limit=limit_1_sec)(fails)
 
-    with pytest.raises(retrace.LimitReached):
+    with pytest.raises(conftest.CustomException):
         wrapped()
 
     assert fails.call_count == count[0]
 
 
 def test_limit_class(fails):
-
     class LimitSeconds(object):
-
         def __init__(self, seconds):
             self.seconds = seconds
             self.count = 0
@@ -105,7 +104,7 @@ def test_limit_class(fails):
     limiter = LimitSeconds(0.1)
     wrapped = retrace.retry(limit=limiter)(fails)
 
-    with pytest.raises(retrace.LimitReached):
+    with pytest.raises(conftest.CustomException):
         wrapped()
 
     assert fails.call_count == limiter.count
