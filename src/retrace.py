@@ -28,7 +28,10 @@ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
 
+import asyncio
+import contextlib
 import functools
+import inspect
 import logging
 import numbers
 import time
@@ -161,9 +164,15 @@ def retry(*dargs, **dkwargs):
             def wrapped_f(*args, **kw):
                 return Retry()(f, *args, **kw)
 
+            if asyncio.iscoroutine(f):
+                return asyncio.coroutine(wrapped_f)
+
             return wrapped_f
 
-        return wrap_simple(dargs[0])
+        wrapped = wrap_simple(dargs[0])
+        if asyncio.iscoroutine(dargs[0]):
+            wrapped = asyncio.coroutine(wrapped)
+        return wrapped
 
     else:
 
@@ -171,6 +180,9 @@ def retry(*dargs, **dkwargs):
             @functools.wraps(f)
             def wrapped_f(*args, **kw):
                 return Retry(*dargs, **dkwargs)(f, *args, **kw)
+
+            if asyncio.iscoroutine(f):
+                wrapped_f = asyncio.coroutine(wrapped_f)
 
             return wrapped_f
 

@@ -8,20 +8,20 @@ class CustomException(Exception):
 
 @pytest.fixture
 def passes():
-    passes = mock.Mock()
-    passes.return_value = 1
-    return passes
+    def inner():
+        return 1
+    return inner
 
 
 @pytest.fixture
 def fails():
-    fails = mock.Mock()
-    fails.side_effect = CustomException()
-    return fails
+    def inner():
+        raise CustomException()
+    return inner
 
 
 @pytest.fixture
 def keyboard_interrupt():
-    keyboard_interrupt = mock.Mock()
-    keyboard_interrupt.side_effect = KeyboardInterrupt()
-    return keyboard_interrupt
+    def inner():
+        raise KeyboardInterrupt()
+    return inner
